@@ -197,8 +197,7 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
         return settings;
     }
 
-    @Override
-    public void onLoad() {
+    private void registerVaultEconomyProvider() {
         try {
             // Vault registers their Essentials provider at low priority, so we have to use normal priority here
             Class.forName("net.milkbowl.vault.economy.Economy");
@@ -276,6 +275,10 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
             confList.add(settings);
             execTimer.mark("Settings");
 
+            if (!settings.isEcoDisabled()) {
+                registerVaultEconomyProvider();
+            }
+
             upgrade.preModules();
             execTimer.mark("Upgrade2");
 
@@ -327,7 +330,9 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
             confList.add(jails);
             execTimer.mark("Init(Jails)");
 
-            EconomyLayers.onEnable(this);
+            if (!settings.isEcoDisabled()) {
+                EconomyLayers.onEnable(this);
+            }
             execTimer.mark("Init(EconomyLayers)");
 
             // Spawner item provider only uses one, but it's here for legacy...
